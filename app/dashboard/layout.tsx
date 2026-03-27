@@ -77,13 +77,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/dashboard" className="flex items-center overflow-hidden" style={{ width: '120px', height: '52px' }}>
+            <Link href="/dashboard" className="flex items-center">
               <Image
-                src="/logo.png"
+                src="/logo-header.png"
                 alt="Jaspen"
-                width={300}
-                height={200}
-                style={{ objectFit: 'cover', objectPosition: 'center 45%', width: '300px', height: '200px', marginTop: '-50px' }}
+                width={1020}
+                height={564}
+                style={{
+                  height: '46px',
+                  width: 'auto',
+                  maskImage: 'radial-gradient(ellipse 90% 70% at center, black 40%, transparent 90%)',
+                  WebkitMaskImage: 'radial-gradient(ellipse 90% 70% at center, black 40%, transparent 90%)',
+                }}
                 priority
               />
             </Link>

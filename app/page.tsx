@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -57,34 +58,20 @@ export default function LoginPage() {
 
       {/* Login card */}
       <div className="relative z-10 w-full max-w-md mx-4 animate-slide-up">
-        {/* Logo area */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-jaspen-400 to-jaspen-600 shadow-2xl mb-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-10 h-10 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-              />
-            </svg>
-          </div>
-          <h1 className="text-4xl font-bold text-white tracking-tight">Jaspen</h1>
-          <p className="text-gray-400 mt-1 text-sm">Familjens gemensamma plats</p>
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          <Image
+            src="/logo.png"
+            alt="Jaspen"
+            width={220}
+            height={120}
+            className="object-contain drop-shadow-2xl"
+            priority
+          />
         </div>
 
         {/* Card */}
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
-          <h2 className="text-white font-semibold text-lg mb-6 text-center">
-            Välkommen tillbaka
-          </h2>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wider">
@@ -142,9 +129,6 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center text-gray-600 text-xs mt-6">
-          jaspen.se &mdash; för familjen
-        </p>
       </div>
     </div>
   )

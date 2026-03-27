@@ -31,7 +31,6 @@ export default function NewAlbumForm({ category, basePath, title }: Props) {
     setError('')
 
     try {
-      // 1. Skapa album
       const albumRes = await fetch('/api/albums', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -51,7 +50,6 @@ export default function NewAlbumForm({ category, basePath, title }: Props) {
 
       const album = await albumRes.json()
 
-      // 2. Lägg till bilder om det finns
       if (pendingImages.length > 0) {
         const imagesRes = await fetch(`/api/albums/${album.id}/images`, {
           method: 'POST',
@@ -86,6 +84,7 @@ export default function NewAlbumForm({ category, basePath, title }: Props) {
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Nytt inlägg</h1>
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Info fields */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Rubrik *</label>
@@ -111,12 +110,12 @@ export default function NewAlbumForm({ category, basePath, title }: Props) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Beskrivning</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Text</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Berätta lite om händelsen..."
-              rows={3}
+              rows={4}
               className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-jaspen-400 focus:border-transparent transition-all resize-none"
             />
           </div>
@@ -124,22 +123,73 @@ export default function NewAlbumForm({ category, basePath, title }: Props) {
 
         {/* Image upload */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">
-            Bilder {pendingImages.length > 0 && <span className="text-jaspen-600">({pendingImages.length} st klara)</span>}
-          </h2>
+          <h2 className="text-sm font-semibold text-gray-700 mb-1">Bilder</h2>
+          <p className="text-xs text-gray-400 mb-4">Ladda upp bilderna och välj sedan vilken som ska vara frontbild</p>
           <ImageUpload
             bucket="album-images"
             onUploadComplete={(imgs) => {
-              setPendingImages((prev) => [...prev, ...imgs])
-              if (!coverUrl && imgs.length > 0) {
-                setCoverUrl(imgs[0].image_url)
-              }
+              setPendingImages((prev) => {
+                const updated = [...prev, ...imgs]
+                if (!coverUrl && imgs.length > 0) {
+                  setCoverUrl(imgs[0].image_url)
+                }
+                return updated
+              })
             }}
           />
+
+          {/* Front image selector */}
           {pendingImages.length > 0 && (
-            <p className="mt-3 text-sm text-green-600">
-              ✓ {pendingImages.length} bild{pendingImages.length !== 1 ? 'er' : ''} redo att sparas
-            </p>
+            <div className="mt-6 pt-5 border-t border-gray-100">
+              <div className="flex items-center gap-2 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+                <p className="text-sm font-medium text-gray-700">
+                  Välj frontbild
+                </p>
+                <span className="text-xs text-gray-400">— klicka på bilden som ska visas som omslagsbild</span>
+              </div>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                {pendingImages.map((img, i) => {
+                  const isSelected = coverUrl === img.image_url
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setCoverUrl(img.image_url)}
+                      className={`relative rounded-xl overflow-hidden transition-all focus:outline-none ${
+                        isSelected
+                          ? 'ring-[3px] ring-yellow-400 ring-offset-2 shadow-lg'
+                          : 'ring-1 ring-gray-200 hover:ring-jaspen-300 hover:shadow-md'
+                      }`}
+                      style={{ aspectRatio: '1' }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={img.image_url}
+                        alt={`Bild ${i + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      {isSelected ? (
+                        <div className="absolute inset-0 bg-yellow-400/15 flex items-end justify-center pb-2">
+                          <div className="flex items-center gap-1 bg-yellow-400 text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                            Frontbild
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 hover:opacity-100">
+                          <span className="text-white text-xs font-medium bg-black/50 px-2 py-0.5 rounded-full">Välj</span>
+                        </div>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
           )}
         </div>
 

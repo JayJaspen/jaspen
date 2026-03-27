@@ -73,7 +73,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+      <header className="bg-[#0d1117] border-b border-white/10 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -96,8 +96,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   href={tab.href}
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     isActive(tab.href)
-                      ? 'bg-jaspen-50 text-jaspen-700'
-                      : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
+                      ? 'bg-white/10 text-jaspen-400'
+                      : 'text-gray-400 hover:text-white hover:bg-white/10'
                   }`}
                 >
                   {tab.icon}
@@ -111,7 +111,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <button
                 onClick={handleLogout}
                 disabled={loggingOut}
-                className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+                className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
@@ -122,7 +122,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               {/* Mobile hamburger */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100"
+                className="md:hidden p-2 rounded-lg text-gray-400 hover:bg-white/10"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   {mobileMenuOpen ? (
@@ -138,7 +138,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white px-4 py-2">
+          <div className="md:hidden border-t border-white/10 bg-[#0d1117] px-4 py-2">
             {tabs.map((tab) => (
               <Link
                 key={tab.href}
@@ -146,8 +146,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mb-1 ${
                   isActive(tab.href)
-                    ? 'bg-jaspen-50 text-jaspen-700'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-white/10 text-jaspen-400'
+                    : 'text-gray-400 hover:bg-white/10 hover:text-white'
                 }`}
               >
                 {tab.icon}
@@ -156,7 +156,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             ))}
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-500 hover:bg-gray-100 w-full mt-1 border-t border-gray-100 pt-3"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:bg-white/10 hover:text-white w-full mt-1 border-t border-white/10 pt-3"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />

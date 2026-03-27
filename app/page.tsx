@@ -59,13 +59,14 @@ export default function LoginPage() {
       {/* Login card */}
       <div className="relative z-10 w-full max-w-md mx-4 animate-slide-up">
         {/* Logo */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center overflow-hidden" style={{ height: '130px', marginBottom: '-8px' }}>
           <Image
             src="/logo.png"
             alt="Jaspen"
             width={440}
             height={240}
-            className="object-contain drop-shadow-2xl"
+            className="drop-shadow-2xl"
+            style={{ objectFit: 'cover', objectPosition: 'center 45%', width: '440px', height: '240px', marginTop: '-40px' }}
             priority
           />
         </div>

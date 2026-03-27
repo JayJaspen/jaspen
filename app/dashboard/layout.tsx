@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -76,13 +77,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/dashboard" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-jaspen-400 to-jaspen-600 flex items-center justify-center shadow">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                </svg>
-              </div>
-              <span className="font-bold text-gray-800 text-lg">Jaspen</span>
+            <Link href="/dashboard" className="flex items-center overflow-hidden" style={{ width: '120px', height: '52px' }}>
+              <Image
+                src="/logo.png"
+                alt="Jaspen"
+                width={300}
+                height={200}
+                style={{ objectFit: 'cover', objectPosition: 'center 45%', width: '300px', height: '200px', marginTop: '-50px' }}
+                priority
+              />
             </Link>
 
             {/* Desktop tabs */}

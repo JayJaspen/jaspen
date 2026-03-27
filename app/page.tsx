@@ -63,8 +63,8 @@ export default function LoginPage() {
           <Image
             src="/logo.png"
             alt="Jaspen"
-            width={220}
-            height={120}
+            width={440}
+            height={240}
             className="object-contain drop-shadow-2xl"
             priority
           />

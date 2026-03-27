@@ -75,7 +75,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Top header */}
       <header className="bg-[#0d1117] border-b border-white/10 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-24">
             {/* Logo */}
             <Link href="/dashboard" className="flex items-center">
               <Image
@@ -84,7 +84,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 width={1020}
                 height={564}
                 style={{
-                  height: '46px',
+                  height: '92px',
                   width: 'auto',
                   maskImage: 'radial-gradient(ellipse 90% 70% at center, black 40%, transparent 90%)',
                   WebkitMaskImage: 'radial-gradient(ellipse 90% 70% at center, black 40%, transparent 90%)',

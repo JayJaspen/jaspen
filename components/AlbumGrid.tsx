@@ -37,7 +37,7 @@ export default function AlbumGrid({ albums, category, basePath }: Props) {
   }
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {albums.map((album) => (
         <PostCard key={album.id} album={album} basePath={basePath} />
       ))}
@@ -97,13 +97,11 @@ function PostCard({ album, basePath }: { album: Album; basePath: string }) {
       </Link>
 
       {/* Text info */}
-      <div className="px-6 py-5">
-        <div className="flex items-start justify-between gap-4 mb-2">
-          <h2 className="text-xl font-bold text-gray-800 leading-snug">{album.title}</h2>
-          <span className="text-sm text-gray-400 whitespace-nowrap mt-1">{formattedDate}</span>
-        </div>
+      <div className="px-4 py-4">
+        <h2 className="text-sm font-bold text-gray-800 leading-snug line-clamp-1 mb-0.5">{album.title}</h2>
+        <p className="text-xs text-gray-400 mb-1">{formattedDate}</p>
         {album.description && (
-          <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">{album.description}</p>
+          <p className="text-gray-500 text-xs leading-relaxed line-clamp-2">{album.description}</p>
         )}
       </div>
     </div>

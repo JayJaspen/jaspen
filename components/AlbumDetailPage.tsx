@@ -234,111 +234,108 @@ export default function AlbumDetailPage({ albumId, basePath, backLabel }: Props)
       {/* ── Lightbox ── */}
       {lightboxIndex !== null && album.images[lightboxIndex] && (
         <div
-          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+          className="fixed inset-0 z-50 bg-black/95 flex flex-col"
           onClick={() => setLightboxIndex(null)}
         >
-          {/* Close */}
-          <button
-            className="absolute top-4 right-4 text-white/70 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors z-10"
-            onClick={() => setLightboxIndex(null)}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          {/* Counter */}
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white/60 text-sm">
-            {lightboxIndex + 1} / {album.images.length}
+          {/* Top bar: counter + close */}
+          <div className="flex items-center justify-between px-4 pt-4 pb-2 shrink-0">
+            <div className="text-white/50 text-sm">{lightboxIndex + 1} / {album.images.length}</div>
+            <button
+              className="text-white/70 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors"
+              onClick={() => setLightboxIndex(null)}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
 
-          {/* Prev */}
-          {lightboxIndex > 0 && (
-            <button
-              className="absolute left-4 text-white/70 hover:text-white p-3 rounded-xl hover:bg-white/10 transition-colors z-10"
-              onClick={(e) => { e.stopPropagation(); setLightboxIndex(i => i! - 1) }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-              </svg>
-            </button>
-          )}
+          {/* Image area — grows to fill available space */}
+          <div className="flex-1 flex items-center justify-center relative px-14 min-h-0">
+            {/* Prev */}
+            {lightboxIndex > 0 && (
+              <button
+                className="absolute left-2 text-white/70 hover:text-white p-3 rounded-xl hover:bg-white/10 transition-colors z-10"
+                onClick={(e) => { e.stopPropagation(); setLightboxIndex(i => i! - 1) }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+              </button>
+            )}
 
-          {/* Next */}
-          {lightboxIndex < album.images.length - 1 && (
-            <button
-              className="absolute right-4 text-white/70 hover:text-white p-3 rounded-xl hover:bg-white/10 transition-colors z-10"
-              onClick={(e) => { e.stopPropagation(); setLightboxIndex(i => i! + 1) }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-              </svg>
-            </button>
-          )}
-
-          {/* Image */}
-          <div
-            className="relative max-w-5xl max-h-[85vh] mx-20"
-            onClick={(e) => e.stopPropagation()}
-          >
             <Image
               src={album.images[lightboxIndex].image_url}
               alt={album.images[lightboxIndex].caption || `Bild ${lightboxIndex + 1}`}
               width={1400}
               height={1050}
-              className="max-h-[80vh] max-w-full object-contain rounded-lg"
+              className="max-h-full max-w-full object-contain rounded-lg"
               style={{ width: 'auto', height: 'auto' }}
+              onClick={(e) => e.stopPropagation()}
             />
-            {/* Caption + download */}
-            <div className="flex items-center gap-3 mt-3" onClick={e => e.stopPropagation()}>
-              {editingCaption ? (
-                <div className="flex flex-1 items-center gap-2">
-                  <input
-                    autoFocus
-                    type="text"
-                    value={captionValue}
-                    onChange={e => setCaptionValue(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter') saveCaption(); if (e.key === 'Escape') setEditingCaption(false) }}
-                    placeholder="Lägg till bildtext..."
-                    className="flex-1 bg-white/10 text-white placeholder-white/40 border border-white/20 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-white/50"
-                  />
-                  <button onClick={saveCaption} disabled={savingCaption} className="bg-jaspen-500 hover:bg-jaspen-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
-                    {savingCaption ? '...' : 'Spara'}
-                  </button>
-                  <button onClick={() => setEditingCaption(false)} className="text-white/50 hover:text-white px-2 py-1.5 rounded-lg text-sm transition-colors">
-                    Avbryt
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => { setCaptionValue(album.images[lightboxIndex].caption || ''); setEditingCaption(true) }}
-                  className="flex-1 text-left text-sm text-white/70 hover:text-white transition-colors"
-                >
-                  {album.images[lightboxIndex].caption
-                    ? album.images[lightboxIndex].caption
-                    : <span className="italic text-white/30">+ Lägg till bildtext</span>
-                  }
-                </button>
-              )}
+
+            {/* Next */}
+            {lightboxIndex < album.images.length - 1 && (
               <button
-                onClick={() => downloadImage(album.images[lightboxIndex].image_url, lightboxIndex)}
-                className="flex items-center gap-1.5 text-white/60 hover:text-white text-sm hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors shrink-0"
+                className="absolute right-2 text-white/70 hover:text-white p-3 rounded-xl hover:bg-white/10 transition-colors z-10"
+                onClick={(e) => { e.stopPropagation(); setLightboxIndex(i => i! + 1) }}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                 </svg>
-                Spara
               </button>
-            </div>
+            )}
           </div>
 
-          {/* Thumbnail strip */}
+          {/* Caption + download — between image and thumbnails */}
+          <div className="shrink-0 flex items-center gap-3 px-6 py-3" onClick={e => e.stopPropagation()}>
+            {editingCaption ? (
+              <div className="flex flex-1 items-center gap-2">
+                <input
+                  autoFocus
+                  type="text"
+                  value={captionValue}
+                  onChange={e => setCaptionValue(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') saveCaption(); if (e.key === 'Escape') setEditingCaption(false) }}
+                  placeholder="Lägg till bildtext..."
+                  className="flex-1 bg-white/10 text-white placeholder-white/40 border border-white/20 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-white/50"
+                />
+                <button onClick={saveCaption} disabled={savingCaption} className="bg-jaspen-500 hover:bg-jaspen-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
+                  {savingCaption ? '...' : 'Spara'}
+                </button>
+                <button onClick={() => setEditingCaption(false)} className="text-white/50 hover:text-white px-2 py-1.5 rounded-lg text-sm transition-colors">
+                  Avbryt
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => { setCaptionValue(album.images[lightboxIndex].caption || ''); setEditingCaption(true) }}
+                className="flex-1 text-left text-sm text-white/80 hover:text-white transition-colors"
+              >
+                {album.images[lightboxIndex].caption
+                  ? album.images[lightboxIndex].caption
+                  : <span className="italic text-white/30">+ Lägg till bildtext</span>
+                }
+              </button>
+            )}
+            <button
+              onClick={() => downloadImage(album.images[lightboxIndex].image_url, lightboxIndex)}
+              className="flex items-center gap-1.5 text-white/60 hover:text-white text-sm hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors shrink-0"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              Spara
+            </button>
+          </div>
+
+          {/* Thumbnail strip — always at bottom */}
           {album.images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 px-4 overflow-x-auto max-w-[90vw]">
+            <div className="shrink-0 flex gap-2 px-4 pb-4 overflow-x-auto justify-center" onClick={e => e.stopPropagation()}>
               {album.images.map((img, i) => (
                 <button
                   key={img.id}
-                  onClick={(e) => { e.stopPropagation(); setLightboxIndex(i) }}
+                  onClick={() => setLightboxIndex(i)}
                   className={`flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border-2 transition-all ${
                     i === lightboxIndex ? 'border-white scale-110' : 'border-white/30 opacity-60 hover:opacity-100'
                   }`}

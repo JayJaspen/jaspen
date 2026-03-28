@@ -23,13 +23,21 @@ export default function AlbumDetailPage({ albumId, basePath, backLabel }: Props)
   const [loading, setLoading] = useState(true)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [editingCaption, setEditingCaption] = useState(false)
+  const [captionValue, setCaptionValue] = useState('')
+  const [savingCaption, setSavingCaption] = useState(false)
 
-  const fetchAlbum = useCallback(async () => {
+  const fetchAlbum = useCallback(async (autoOpen = false) => {
     try {
       const res = await fetch(`/api/albums/${albumId}`)
       if (!res.ok) { router.push(basePath); return }
       const data = await res.json()
       setAlbum(data)
+      // Auto-open lightbox on first load
+      if (autoOpen && data.images?.length > 0) {
+        const coverIdx = data.images.findIndex((img: AlbumImage) => img.image_url === data.cover_image_url)
+        setLightboxIndex(coverIdx >= 0 ? coverIdx : 0)
+      }
     } catch {
       router.push(basePath)
     } finally {
@@ -37,19 +45,52 @@ export default function AlbumDetailPage({ albumId, basePath, backLabel }: Props)
     }
   }, [albumId, basePath, router])
 
-  useEffect(() => { fetchAlbum() }, [fetchAlbum])
+  useEffect(() => { fetchAlbum(true) }, [fetchAlbum])
 
   // Keyboard navigation for lightbox
   useEffect(() => {
     if (lightboxIndex === null || !album) return
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setLightboxIndex(null)
-      if (e.key === 'ArrowRight') setLightboxIndex(i => i !== null && i < album!.images.length - 1 ? i + 1 : i)
-      if (e.key === 'ArrowLeft') setLightboxIndex(i => i !== null && i > 0 ? i - 1 : i)
+      if (e.key === 'Escape') { setLightboxIndex(null); setEditingCaption(false) }
+      if (e.key === 'ArrowRight' && !editingCaption) {
+        setLightboxIndex(i => i !== null && i < album!.images.length - 1 ? i + 1 : i)
+        setEditingCaption(false)
+      }
+      if (e.key === 'ArrowLeft' && !editingCaption) {
+        setLightboxIndex(i => i !== null && i > 0 ? i - 1 : i)
+        setEditingCaption(false)
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
+  }, [lightboxIndex, album, editingCaption])
+
+  // Reset caption edit when switching images
+  useEffect(() => {
+    setEditingCaption(false)
+    if (album && lightboxIndex !== null) {
+      setCaptionValue(album.images[lightboxIndex]?.caption || '')
+    }
   }, [lightboxIndex, album])
+
+  async function saveCaption() {
+    if (!album || lightboxIndex === null) return
+    setSavingCaption(true)
+    const imageId = album.images[lightboxIndex].id
+    try {
+      await fetch(`/api/albums/${albumId}/images/${imageId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ caption: captionValue }),
+      })
+      setEditingCaption(false)
+      fetchAlbum(false)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setSavingCaption(false)
+    }
+  }
 
   async function handleDelete() {
     if (!confirm('Är du säker på att du vill radera detta inlägg och alla bilder?')) return
@@ -249,13 +290,39 @@ export default function AlbumDetailPage({ albumId, basePath, backLabel }: Props)
               style={{ width: 'auto', height: 'auto' }}
             />
             {/* Caption + download */}
-            <div className="flex items-center justify-between mt-3">
-              <p className="text-white/70 text-sm">
-                {album.images[lightboxIndex].caption || ''}
-              </p>
+            <div className="flex items-center gap-3 mt-3" onClick={e => e.stopPropagation()}>
+              {editingCaption ? (
+                <div className="flex flex-1 items-center gap-2">
+                  <input
+                    autoFocus
+                    type="text"
+                    value={captionValue}
+                    onChange={e => setCaptionValue(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') saveCaption(); if (e.key === 'Escape') setEditingCaption(false) }}
+                    placeholder="Lägg till bildtext..."
+                    className="flex-1 bg-white/10 text-white placeholder-white/40 border border-white/20 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-white/50"
+                  />
+                  <button onClick={saveCaption} disabled={savingCaption} className="bg-jaspen-500 hover:bg-jaspen-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
+                    {savingCaption ? '...' : 'Spara'}
+                  </button>
+                  <button onClick={() => setEditingCaption(false)} className="text-white/50 hover:text-white px-2 py-1.5 rounded-lg text-sm transition-colors">
+                    Avbryt
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => { setCaptionValue(album.images[lightboxIndex].caption || ''); setEditingCaption(true) }}
+                  className="flex-1 text-left text-sm text-white/70 hover:text-white transition-colors"
+                >
+                  {album.images[lightboxIndex].caption
+                    ? album.images[lightboxIndex].caption
+                    : <span className="italic text-white/30">+ Lägg till bildtext</span>
+                  }
+                </button>
+              )}
               <button
                 onClick={() => downloadImage(album.images[lightboxIndex].image_url, lightboxIndex)}
-                className="flex items-center gap-1.5 text-white/70 hover:text-white text-sm hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors ml-4"
+                className="flex items-center gap-1.5 text-white/60 hover:text-white text-sm hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors shrink-0"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />

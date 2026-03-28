@@ -288,9 +288,9 @@ export default function AlbumDetailPage({ albumId, basePath, backLabel }: Props)
           </div>
 
           {/* Caption + download — between image and thumbnails */}
-          <div className="shrink-0 flex items-center gap-3 px-6 py-3" onClick={e => e.stopPropagation()}>
+          <div className="shrink-0 px-6 py-2" onClick={e => e.stopPropagation()}>
             {editingCaption ? (
-              <div className="flex flex-1 items-center gap-2">
+              <div className="flex items-center gap-2 max-w-xl mx-auto">
                 <input
                   autoFocus
                   type="text"
@@ -298,35 +298,38 @@ export default function AlbumDetailPage({ albumId, basePath, backLabel }: Props)
                   onChange={e => setCaptionValue(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') saveCaption(); if (e.key === 'Escape') setEditingCaption(false) }}
                   placeholder="Lägg till bildtext..."
-                  className="flex-1 bg-white/10 text-white placeholder-white/40 border border-white/20 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-white/50"
+                  className="flex-1 bg-white/10 text-white placeholder-white/30 border border-white/20 rounded-lg px-3 py-1.5 text-sm italic text-center focus:outline-none focus:border-white/50"
                 />
-                <button onClick={saveCaption} disabled={savingCaption} className="bg-jaspen-500 hover:bg-jaspen-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
+                <button onClick={saveCaption} disabled={savingCaption} className="bg-jaspen-500 hover:bg-jaspen-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shrink-0">
                   {savingCaption ? '...' : 'Spara'}
                 </button>
-                <button onClick={() => setEditingCaption(false)} className="text-white/50 hover:text-white px-2 py-1.5 rounded-lg text-sm transition-colors">
-                  Avbryt
+                <button onClick={() => setEditingCaption(false)} className="text-white/40 hover:text-white px-2 py-1.5 rounded-lg text-sm transition-colors shrink-0">
+                  ✕
                 </button>
               </div>
             ) : (
-              <button
-                onClick={() => { setCaptionValue(album.images[lightboxIndex].caption || ''); setEditingCaption(true) }}
-                className="flex-1 text-left text-sm text-white/80 hover:text-white transition-colors"
-              >
-                {album.images[lightboxIndex].caption
-                  ? album.images[lightboxIndex].caption
-                  : <span className="italic text-white/30">+ Lägg till bildtext</span>
-                }
-              </button>
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={() => { setCaptionValue(album.images[lightboxIndex].caption || ''); setEditingCaption(true) }}
+                  className="text-sm italic text-white/65 hover:text-white/90 transition-colors text-center tracking-wide"
+                  style={{ fontStyle: 'italic' }}
+                >
+                  {album.images[lightboxIndex].caption
+                    ? album.images[lightboxIndex].caption
+                    : <span className="text-white/25 not-italic text-xs">+ Lägg till bildtext</span>
+                  }
+                </button>
+                <button
+                  onClick={() => downloadImage(album.images[lightboxIndex].image_url, lightboxIndex)}
+                  className="flex items-center gap-1 text-white/35 hover:text-white/70 text-xs hover:bg-white/10 px-2 py-1 rounded-lg transition-colors shrink-0"
+                  title="Spara bild"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                  </svg>
+                </button>
+              </div>
             )}
-            <button
-              onClick={() => downloadImage(album.images[lightboxIndex].image_url, lightboxIndex)}
-              className="flex items-center gap-1.5 text-white/60 hover:text-white text-sm hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors shrink-0"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-              </svg>
-              Spara
-            </button>
           </div>
 
           {/* Thumbnail strip — always at bottom */}
